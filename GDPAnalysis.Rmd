@@ -1,0 +1,82 @@
+---
+title: "GDP Analysis"
+author: "Venkat Sharma"
+date: "October 30, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Introduction
+
+Gross domestic product (GDP) is one measure of economic activity, the total amount of goods and services produced in the United States in a year.  It is calculated by adding together the market values of all of the final goods and services produced in a year.This case study is analysis of GDP of 190 countries around the globe, based on the data consiting of GDP ranking table,educational statistics donwloaded from worldbank website.<br>
+http://data.worldbank.org/data-catalog/GDP-ranking-table<br>
+http://data.worldbank.org/data-catalog/ed-stats
+
+## Analysis
+
+Below Code downloads the GDP data from worldbank site, cleans it up :
+
+```{r}
+setwd("./Data")
+source("LoadGrossDomesticProductData.R")
+```
+
+
+Below Code downloads the Educational data from worldbank site and cleans it up :
+```{r}
+setwd("./Data")
+source("LoadEducationalData.R")
+```
+
+Now,we have two datasets donwloaded and cleaned,Merge the GDP dataset and educational data on the basis of CountryCode
+```{r}
+setwd("./Data")
+source("MergedData.R")
+```
+
+* Calculation of matching IDs from the merged dataset
+```{r}
+length(intersect(GDPProductData$CountryCode,EducationalData$CountryCode))
+```
+
+* Sorts the merged dataframe in ascending order of GDP,queries the 13th country from the resulting data frame, And the country is "Kingdom of Bhutan"
+```{r}
+ FinalMergedData <- FinalMergedData[order(FinalMergedData$USD),]
+ FinalMergedData[13,]
+```
+
+* Provides the summary of the Average GDP rankings for the "High income: OECD" and "High income: nonOECD" groups, And they are 30 and 37 respectively from the below table output
+
+```{r}
+table(FinalMergedData$Income.Group)
+```
+
+
+
+## Plot of GDP of all countries
+
+* Below code plots the GDP of all countries,it uses ggplot2 with Income group highlighed is various colors
+
+```{r}
+library(ggplot2)
+LinePlot <- ggplot(data = FinalMergedData, aes(x = FinalMergedData$CountryCode, 
+  y = FinalMergedData$USD, color = FinalMergedData$Income.Group,  linetype = FinalMergedData$Income.Group)) + 
+  geom_density() + scale_color_discrete(name = "", labels = c("High income:nonOECD", 
+  "High income:OECD","Low income","Lower middle income","Upper middle income")) +scale_linetype(name = "", 
+  labels = c("High income:nonOECD", "High income:OECD","Low income","Lower middle income","Upper middle income")) +
+  xlab("\n Country") + ylab("GDP\n") + theme_bw(base_size =6)
+print(LinePlot)
+```
+
+* Below code breaks down the GDP rankings into 5 separate quantile groups and outputs a tabular format of GDP group versus Income Group.Hence tabular output suggests that  Countries with low medium, medium high and high income totals to around 142 countries.
+```{r}
+quantileData <- cut(as.numeric(FinalMergedData$Ranking),
+                      breaks=  c(0,50,100,150,200),
+                    labels =c("low", "medium low", "medium high", "high income"))
+table(quantileData)
+```
+
+

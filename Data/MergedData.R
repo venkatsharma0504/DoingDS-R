@@ -10,7 +10,7 @@
 # Download URL https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2FEDSTATS_Country.csv
 
 ##################################################################################
-
+#load the R scripts for both the datasets
 source("LoadGrossDomesticProductData.R")
 source("LoadEducationalData.R")
 
@@ -18,11 +18,9 @@ FinalMergedData <- merge(x=GDPProductData,
                          y=EducationalData,
                          by="CountryCode",
                          all=TRUE)
-#NotMatchingRecs <- GDPProductData[is.na(match(GDPProductData$CountryCode,EducationalData$CountryCode)),]
-#length(intersect(GDPProductData$CountryCode,EducationalData$CountryCode))
+
 FinalMergedData <- FinalMergedData[order(FinalMergedData$USD),]
-#FinalMergedData[13,]
-#summary(FinalMergedData$Income.Group)
+
 library(ggplot2)
 LinePlot <- ggplot(data = FinalMergedData, aes(x = FinalMergedData$CountryCode, y = FinalMergedData$USD, color = FinalMergedData$Income.Group, linetype = FinalMergedData$Income.Group)) + 
   geom_density() + scale_color_discrete(name = "", labels = c("High income:nonOECD", "High income:OECD","Low income","Lower middle income","Upper middle income")) +scale_linetype(name = "", 

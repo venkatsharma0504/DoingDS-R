@@ -15,11 +15,11 @@ library(repmis)
 library(RCurl)
 
 # create a  site URL variable
-#site <- "https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2FGDP.csv"
+site <- "https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2FGDP.csv"
 #just check current working directory
-#getwd()
+getwd()
 # download the dataset file into the current directory i.e data directory
-#download.file(site,destfile="./GDPProductData.csv")
+download.file(site,destfile="./GDPProductData.csv")
 # read the CSV file to create a dataset
 GDPProductData <-read.csv("GDPProductData.csv",header =TRUE)
 # clean dataset for null or empty records
